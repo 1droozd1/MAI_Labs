@@ -5,6 +5,7 @@ void merge(deque* res, deque* a, deque* b)
 {
     deque c;
     deque_create(&c);
+
     while (!empty(a) && !empty(b)) {
 	    if (first_front(a) < first_front(b)) {
 	    push_back(&c, first_front(a));
@@ -32,7 +33,7 @@ void merge(deque* res, deque* a, deque* b)
 // Сортировка слиянием
 void merge_sort(deque* a) {
     if (size(a) > 1) {
-	    deque b, c;
+	    deque b, c; 
 	    deque_create(&b);
 	    deque_create(&c);
 	    while (!empty(a)) {
@@ -49,3 +50,11 @@ void merge_sort(deque* a) {
 	    merge(a, &b, &c);
     }
 }
+// 9 1 7 5 6 2
+/*
+     1 9 - 5 7
+1    9     5     7
+
+
+
+*/

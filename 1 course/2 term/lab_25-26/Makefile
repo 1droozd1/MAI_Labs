@@ -6,6 +6,8 @@ HD = deck.h
 
 all: $(OBJ)
 	$(CC) -o main $(OBJ) $(CCFLAGS)
+	./main
+	rm -f main $(OBJ)
 
 main.o: $(HD)
 	$(CC) $(CCFLAGS) -c main.c

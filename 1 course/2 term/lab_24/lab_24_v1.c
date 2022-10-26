@@ -1,55 +1,59 @@
-#include <stdio.h> 
+#include <stdio.h> //#18 
 #include <stdlib.h>
 
-struct tnode 
+struct node
 {
-  int field;           // поле данных
-  int dep;           // глубина дерева
-  struct tnode *left;  // левый потомок
-  struct tnode *right; // правый потомок
+    int k;
+    char op;
+    struct node *l;
+    struct node *r;
 };
 
-struct tnode *addnode(struct tnode *tree, int x, int depth_loc) {
-    depth_loc ++;
-  if (tree == NULL) { // Случай, когда дерева нет - формирование корня дерева
-    struct tnode *tree = malloc(sizeof(struct tnode)); // память под узел
-    tree->field = x;   // поле данных
-    tree->dep = depth_loc;
-    tree->left =  NULL;
-    tree->right = NULL; // ветви инициализируем пустотой
-    return tree;
-  }
-  if (x < tree->field) {
-    tree->left = addnode(tree->left, x, depth_loc);
-  }
-  if (x > tree->field) {
-    tree->right = addnode(tree->right, x, depth_loc);
-  }
-  return(tree);
-}
-void inorder(struct tnode *tree) // центрированный тип обхода
+struct node *add(struct node *t, int n, char op)
 {
-    if (tree == NULL) 
+    if (t == NULL) 
+    {
+        struct node *t = malloc(sizeof(struct node));
+        t->k = n;
+        t->op = op;
+        t->r = NULL;
+        t->l = NULL;
+        return t;
+    }
+    
+    if (n < t->k) 
+        t->l = add(t->l, n, op);
+    if (n >= t->k) 
+        t->r = add(t->r, n, op);
+    return t;
+};
+
+void inorder(struct node *t)
+{
+    if (t == NULL) 
         return;
-    inorder(tree->left);
-    printf("%d ", tree->field);
-    inorder(tree->right);
+    inorder(t->l);
+    if (t->op == '^')
+        printf("*%d", t->k);
+    else
+        printf("*%c", t->op);
+    inorder(t->r);
 }
 
-struct tnode *rem(struct tnode *tree)
+struct node *rem(struct node *t)
 {
-    if (tree == NULL) 
-        return tree;
-    if (tree->left == NULL && tree->right == NULL)
+    if (t == NULL) 
+        return t;
+    if (t->l == NULL && t->r == NULL)
     {
-        free(tree);
+        free(t);
         return NULL;
     }
-    if (tree->right != NULL)
-        tree->right = rem(tree->right);
-    if (tree->left != NULL)
-        tree->left = rem(tree->left);
-    return rem(tree);
+    if (t->r != NULL)
+        t->r = rem(t->r);
+    if (t->l != NULL)
+        t->l = rem(t->l);
+    return rem(t);
 }
 
 int main()

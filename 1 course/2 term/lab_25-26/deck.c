@@ -93,7 +93,7 @@ int size(deque* a)
     return a->number_of_elements;
 }
 
-// Вернуть размер выделенной памяти в деке (бесполезно, но вдруг)
+// Вернуть размер выделенной памяти в деке
 int deque_size(deque *a)
 {
     return a->capacity;
