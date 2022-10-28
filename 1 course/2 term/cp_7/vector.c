@@ -1,236 +1,264 @@
+#include "stdbool.h"
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "vector.h"
 
 
-int v_width(vector *v) {
-    vector *f = v;
-    int max = 0;
-    while (f->next->next != NULL) {
-        if(f->value > max) max = f->value;
-        f = f->next->next;
+void vector_create(vector* v, int size) //определение размера созданного вектора
+{
+    v->size = size;
+    v->data = (int*)malloc(sizeof(int) * v->size);
+    v->elements_count = 0;
+}
+
+int size(vector* v)
+{
+    return v->size;
+}
+
+bool empty(vector* v)
+{
+    return v->size == 0;
+}
+
+void size_pp(vector* v)
+{
+    v->size++;
+    v->data = realloc(v->data, sizeof(int) * v->size);
+}
+
+void push_back(vector* v, int value)
+{
+    if (v->size == v->elements_count) {
+        size_pp(v);
     }
-    return max;
+    v->data[v->elements_count++] = value;
 }
 
-int v_height(vector *v) {
-    vector *f = v;
-    int max = 0;
-    while (f->next->next != NULL) {
-        if(f->value == 0 && f->next->value > max) max = f->next->value;
-        f = f->next;
+void destroy(vector* v)
+{
+    v->size = 0;
+    v->elements_count = 0;
+    free(v->data);
+}
+
+
+//---------------------------------------------------------------------------------------------
+//MATRIX PART
+//---------------------------------------------------------------------------------------------
+
+
+int el_count(char name[20])
+{
+    int a = 0;
+    int count = 0;
+    FILE* f;
+    if ((f = fopen(name, "r")) == NULL) {
+        printf("The file not exists\n");
+        exit(1);
     }
-    return max;
-}
 
-vector * get_unit(vector *v, int row, int column) {
-    vector *f = find_row_start(v, row);
-    if(f->value == 0) return f;
-    else {
-        f = f->next;
-        while(f->value!=0) {
-            if(f->value == column) {
-                return f->next;
-            }
-            else f = f->next->next;
-        }
-        return f;
+    while(fscanf(f, "%d", &a) && !feof(f)) {
+        count++;
     }
+    fclose(f);
+    return count + 1;
 }
 
-vector * trans_norm(vector *v){
-    vector *f = create_vector();
-    int height = v_height(v);
-    int width = v_width(v);
-   
-    for(int i = 1; i < height+1; i++) {
-        for(int j = 1; j < width+1; j++)  {
-            //print_sch(f);
-         
-            if(get_unit(v, i, j)->value != 0) add_unit(f, j, i, get_unit(v, i, j)->value);
-        }
+int lines_count(char name[20])
+{
+    int count = 0;
+
+    FILE* f;
+    if ((f = fopen(name, "r")) == NULL) {
+        printf("The file not exists\n");
+        exit(1);
     }
-    return f;
+    
+    while (!feof(f)) {
+        if (fgetc(f) == '\n')
+            count++;
+    }
+    fclose(f);
+    return count + 1;
 }
 
-vector * create_vector() {
-    vector *v = malloc(sizeof(vector));
-    v->value = 0;
-    v->prev = NULL;
-    vector *v_end = malloc(sizeof(vector));
-    v_end->value = 0;
-    v_end->prev = v;
-    v_end->next = NULL;
-    v->next = v_end;
-    return v;
-}
+vector* matrix_input(vector* v)
+{
+    int a;
+    char name[20];
+    int n, m;
 
-vector * create_from_file(FILE *f) {
-    vector *v = create_vector();
-    char c =' ';
-    char d[MAXNUM] = "";
-    char di = 0;
-    int i = 1;
-    int j = 1;
-    while(true) {
-        c = getc(f);
-        if(c == EOF) {
-            double value = atof(d);
-            if(value != 0) {
-                add_unit(v, i, j, value);
-                print_normal(v);
-                printf("===\n");
-            }
-            break;
-        }
-        else if(c == '\n') {
-            
-            di = 0;
-            double value = atof(d);
-            memset(d, 0, MAXNUM);
-            if(value != 0) {
-                add_unit(v, i, j, value);
-                print_normal(v);
-                printf("===\n");
-            }
-            
-            i++;
-            j = 1;
-        } else if(c == ' ') {
-            di = 0;
-            double value = atof(d);
-            memset(d, 0, MAXNUM);
-            if(value != 0) {
-                add_unit(v, i, j, value);
-                print_normal(v);
-                printf("===\n");
-            }
-            j++;
-        } else {
-            d[di] = c;
-            di++;
+    vector_create(v, 1);
+    scanf("%s", name);
+    
+    FILE* f = fopen(name, "r");
+    if (f == NULL) {
+        printf("The file not exists\n");
+        exit(1);
+    }
+    n = lines_count(name);
+    m = el_count(name) / n;
+
+    int c[n][m];
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            fscanf(f, "%d", &a);
+            c[i][j] = a;
         }
     }
+    int g = 0;
+    for (int p = 0; p < n; p++) {
+        int k = 0;
+        for (int g = 0; g < m; g++) {
+            if (c[p][g] != 0) {
+                if (k == 0) {
+                    push_back(v, p + 1);
+                    k++;
+                }
+                push_back(v, g + 1);
+                push_back(v, c[p][g]);
+            }
+        }
+        if (k != 0) {
+            push_back(v, 0);
+        }
+    }
+
+    push_back(v, 0);
+    push_back(v, n);
+    push_back(v, m);
     fclose(f);
     return v;
 }
 
-void add_unit(vector *v, int row, int column, double value) {
-    vector *f = find_row_start(v, row);
-    if(f->value == 0) {
-        vector *row_v = malloc(sizeof(vector));
-        row_v->value = row;
-        add_unit_to_start(row_v, f);
-        vector *column_v = malloc(sizeof(vector));
-        column_v -> value = column;
-        add_unit_to_start(column_v, row_v);
-        vector *value_v = malloc(sizeof(vector));
-        value_v -> value = value;
-        add_unit_to_start(value_v, column_v);
-        vector *end_v = malloc(sizeof(vector));
-        end_v -> value = 0;
-        add_unit_to_start(end_v, value_v);
+void task_print(vector* v)
+{
+    if (v == NULL) {
+        return;
     }
-    else {
-        vector *d = f->next;
-        while(d->value != 0) {
-            if(d->value > column) {
-                break;
-            }
-            d = d->next->next;
-        }
-        d = d->prev;
-        vector *column_v = malloc(sizeof(vector));
-        column_v -> value = column;
-        add_unit_to_start(column_v, d);
-        vector *value_v = malloc(sizeof(vector));
-        value_v -> value = value;
-        add_unit_to_start(value_v, column_v);
+    printf("Matrix pattern placing\n");
+    for (int i = 0; i < v->size - 2; i++) {
+        printf("%d ", v->data[i]);
     }
-}
-
-vector * find_row_start(vector *v, int row) {
-    vector *f = v;
-    vector *start = v;
-    while (f->next!=NULL) {
-        if (f->value == 0 & f->next->value == row) {
-            start = f->next;
-            return start;
-        }
-        else if(f->value == 0 & f->next->value > row){
-            start = f;
-            return start;
-        }
-        else if(f->value == 0 & f->next->value == 0){
-            start = f;
-            return start;
-        }
-        else f = f->next;
-    }
-    return v;
-}
-
-void add_unit_to_start(vector *v, vector *start){
-    v->next = start->next;
-    v->prev = start;
-    start -> next -> prev = v;
-    start -> next = v;
-}
-
-void print_normal(vector *v) {
-    int height = v_height(v);
-    int width = v_width(v);
-    for(int i = 1; i < height+1; i++) {
-        printf("|\t\t");
-        for(int j = 1; j < width+1; j++)  {
-            printf("%.2f\t\t", get_unit(v, i, j)->value);
-        }
-        printf("|\n");
-    }
-}
-
-void print_sch(vector *v) {
-    vector *f = v;
-    int count = 0;
-    printf("||");
-    while(f->next != NULL) {
-        printf("\t%.2f\t|", f->value);
-        count ++;
-        if(count == 2) {
-            printf("|");
-            count = 0;
-        }
-       
-        f = f->next;
-    }
-    printf("\t%.2f\t||", f->value);
     printf("\n");
 }
 
-vector * trans(vector *v){
-    vector *f = create_vector();
-    int height = v_height(v);
-    int width = v_width(v);
-   
-    for(int i = 1; i < height+1; i++) {
-        for(int j = 1; j < width+1; j++)  {
-            //print_sch(f);
-         
-            if(get_unit(v, i, j)->value != 0) add_unit(f, width + 1 - j, height + 1 - i, get_unit(v, i, j)->value);
+void function(vector* v)
+{
+    printf("Lines with the most non-zero elements and the sum ot their elements:\n");
+    int count = 0;
+    int k = 0;
+    vector a;
+    vector* q = &a;
+    if (v->data[0] == 0) {
+        for (int r = 0; r < v->data[v->size - 2]; r++) {
+            printf("%d 0\n", r + 1);
         }
+        exit(0);
     }
-    return f;
-}
-
-bool is_cososim(vector *v) {
-    int width = v_width(v);
-    int height = v_height(v);
-    if(width != height) return false;
-    else {
-        vector *f = trans_norm(v);
-        for(int i = 1; i < height+1; i++) {
-            for(int j = 1; j < width+1; j++)  {
-                if(-get_unit(v, i, j)->value != get_unit(f, i, j)->value) return false;;
+    vector_create(q, v->data[v->size - 2]);
+    
+    for (int i = 0; i < v->size - 3; i++) {
+        if (v->data[i] != 0) {
+            count++;
+        } else {
+            q->data[k] = (count - 1) / 2;
+            k++;
+            count = 0;
+        }  
+    }
+    vector s;
+    vector* w = &s;
+    int sum = 0;
+    k = 0;
+    vector_create(&s, v->data[v->size - 2]);
+    for (int j = 0; j < v->size - 3;) {
+        if (sum == 0) {
+            sum = v->data[j + 2];
+            if (v->data[j + 3] == 0) {
+                j = j + 4;
+                w->data[k] = sum;
+                sum = 0;
+                k++;
+            } else {
+                j = j + 3;
+            }
+        } else {
+            sum = sum + v->data[j + 1];
+            if (v->data[j + 2] == 0) {
+                j = j + 3;
+                w->data[k] = sum;
+                sum = 0;
+                k++;
+            } else {
+                j = j + 2;
             }
         }
-        return true;
+    }
+    int max = 0;
+    for (int i = 0; i < q->size; i++) {
+        if (max < q->data[i]) {
+            max = q->data[i];
+        }
+    }
+    for (int j = 0; j < s.size; j++) {
+        if (q->data[j] == max) {
+            printf("%d %d", j + 1, w->data[j]);
+            printf("\n");
+        }
+    }
+}
+
+void natural_print(vector* v)
+{
+    int n = v->data[v->size - 2];
+    int m = v->data[v->size - 1];
+    int a[n][m];
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            a[i][j] = 0;
+        }
+    }
+    if (v->size == 0) {
+        return;
+    }
+    int l = 0;
+    int k = 0;
+    int count = 0;
+    int value;
+    for (int i = 0; i < v->size - 5;) {
+        if (count == 0) {
+            l = v->data[i] - 1;
+            k = v->data[i + 1] - 1;
+            value = v->data[i + 2];
+            a[l][k] = value;
+            count++;
+            if (v->data[i + 3] == 0) {
+                count--;
+                i = i + 4;
+            } else {
+                i = i + 3;
+            }
+        } else {
+            k = v->data[i] - 1;
+            value = v->data[i + 1];
+            a[l][k] = value;
+            if (v->data[i + 2] == 0) {
+                count--;
+                i = i + 3;
+            } else {
+                i = i + 2;
+            }
+        }
+    }
+    printf("Natural form of matrix\n");
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            printf("%d ", a[i][j]);
+        }
+        printf("\n");
     }
 }

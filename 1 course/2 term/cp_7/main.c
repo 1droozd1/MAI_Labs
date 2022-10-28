@@ -1,15 +1,36 @@
 #include "vector.h"
+#include <stdlib.h>
 
-bool isInt(const char*str) {
+
+int main(int args, char argv[])
+{
+    vector *v = malloc(sizeof(vector));
+
+    printf("Write file name:\n");
+
+    matrix_input(v);
+
+    printf("1\n");
+
+    task_print(v);
+    natural_print(v);
+
+    function(v);
+
+    return 0;
+}
+
+
+/*bool isInt(const char*str) {
     while(*str)  {
         if((*str< '0' || *str > '9') && *str != '-')
             return false;
         *str++;
     }
     return true;
-}
+}*/
 
-int main(int argc, const char * argv[]) {
+/*int main(int argc, const char * argv[]) {
     vector *v = NULL;
     
     bool working = true;
@@ -138,4 +159,4 @@ int main(int argc, const char * argv[]) {
         }
     }
     return 0;
-}
+}*/
