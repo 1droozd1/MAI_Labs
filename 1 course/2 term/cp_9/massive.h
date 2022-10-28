@@ -1,44 +1,30 @@
-#ifndef MASSIVE_H
-#define MASSIVE_H
+#ifndef massive_h
+#define massive_h
 
-#include <stdbool.h>
-#include <string.h>
 #include <stdio.h>
-#include <stdlib.h>
+#include "stdlib.h"
+#include "stdbool.h"
+#include "string.h"
 
-typedef int key_type;
-typedef struct 
-{
-	char key[7];
-	char value[100];
-} value_type;
+#define MAXLEN 1024
 
-typedef struct {
-	value_type *begin;
-	size_t size;
-	size_t allocated;
-} vector;
+typedef struct unit {
+    int k;
+    char v[MAXLEN];
+}unit;
 
-void create(vector *v);
+typedef struct map{
+    int max_size;
+    int size;
+    struct unit **units;
+}map;
 
-void destroy(vector *v);
-
-bool is_empty(vector *v);
-
-bool is_full(vector *v);
-
-void push(vector *v, value_type value);
-
-value_type pop(vector *v);
-
-void print(vector *v);
-
-size_t size(vector *v);
-
-int comparator(value_type x, value_type y);
-
-void bin_insertion_sort(vector *v);
-
-value_type bin_search(vector *v, char key[7]);
+bool isInt(const char*str);
+map * map_create();
+unit * search(map *m, int key, int left, int right);
+void map_add(map *m, int k, char *v);
+void map_sort(map *m);
+void map_generate(map *m);
+void map_print(map *m);
 
 #endif

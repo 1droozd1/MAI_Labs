@@ -1,88 +1,112 @@
 #include "massive.h"
+//valgrind --tool=memcheck ./a.out
 
-void print(vector *v)
-{
-	for (int i = 0; i < v->size; ++i) {
-		printf("%s ", v->begin[i].value);
+bool isInt(const char*str) {
+    while(*str)  {
+        if((*str< '0' || *str > '9') && *str != '-')
+            return false;
+        *str++;
+    }
+    return true;
+}
+
+bool contain(int n, int a[]) {
+    for(int i = 0; i < 14; i++) {
+        if(a[i] == n) return true;
+    }
+    return false;
+}
+
+
+void map_sort_xor(map *m, int start, int end) {
+    int i = start;
+    int j = end;
+    int mid = m->units[(start+end)/2]->k;
+    
+    do {
+        while(m->units[i]->k < mid) i++;
+        while(m->units[j]->k > mid) j--;
+        
+        if(i <= j) {
+            if (m->units[i]->k > m->units[j]->k) {
+                unit *a = m->units[i];
+                m->units[i] = m->units[j];
+                m->units[j] = a;
+            }
+            i++;
+            j--;
+        }
+    }while (i <= j);
+    
+    if( i < end) map_sort_xor(m, i, end);
+    if(start < j) map_sort_xor(m, start, j);
+}
+
+map * map_create(){
+    map *m = malloc(sizeof(map));
+    m->max_size = 14;
+    m->size = 0;
+    m->units = (unit**)malloc(sizeof(unit*) * m->max_size);
+    return m;
+}
+
+void map_add(map *m, int k, char *v) {
+    if(m->size < m->max_size){
+        unit *u = malloc(sizeof(unit));
+        u->k = k;
+        strcpy(u->v, v);
+        m->units[m->size] = u;
+        m->size++;
+    } else {
+        printf("Map is full!\n");
+    }
+}
+
+void map_sort(map *m) {
+    map_sort_xor(m, 0, m->size-1);
+}
+
+void map_generate(map *m) {
+
+    char surnames[][MAXLEN] = {"У лукоморья дуб зелёный;", "Златая цепь на дубе том:", "И днём и ночью кот учёный", 
+	"Всё ходит по цепи кругом;", "Идёт направо — песнь заводит,", "Налево — сказку говорит.", "Там чудеса: там леший бродит,", 
+	"Русалка на ветвях сидит;", "Там на неведомых дорожках", "Следы невиданных зверей;", "Избушка там на курьих ножках", 
+	"Стоит без окон, без дверей;", "Там лес и дол видений полны;"};
+
+    int a[14];
+    for(int i = 0; i < 14; i++) {
+        a[i] = -1;
+    }
+    int j = 0;
+    for(int i = 0; i<m->max_size-1; i++) {
+        int r = rand()%13;
+        while(contain(r, a)) {
+            r = rand()%13;
+        }
+        a[j] = r;
+        j++;
+        map_add(m, r, surnames[r]);
+    }
+}
+
+void map_print(map *m) {
+    for(int i = 0; i < m->size; i++) {
+		printf("%d: %s\n", m->units[i]->k, m->units[i]->v);
 	}
-	printf("\n");
+    printf("\n");
 }
 
-bool is_empty(vector *v)
-{
-	return v->size == 0;
-}
-
-bool is_full(vector *v)
-{
-	return v->size == v->allocated;
-}
-
-size_t size(vector *v)
-{
-	return v->size;
-}
-
-void create(vector *v)
-{
-	v->size = 0;
-	v->allocated = 0;
-	v->begin = NULL;
-}
-
-void destroy(vector *v)
-{
-	free(v->begin);
-	v->size = 0;
-	v->allocated = 0;
-	v->begin = NULL;
-}
-
-void push(vector *v, value_type value)
-{
-	if (is_full(v)) {
-		v->allocated += 10;
-		v->begin = realloc(v->begin, v->allocated * sizeof(value_type));
-	}
-	v->begin[v->size] = value;
-	v->size++;
-}
-
-value_type pop(vector *v)
-{
-	value_type res = v->begin[v->size - 1];
-	v->size--;
-	return res;
-}
-
-int comparator(value_type x, value_type y)
-{
-	if (strcmp(x.key, y.key) > 0) {
-		return 1;
-	} else if (strcmp(x.key, y.key) < 0) {
-		return -1;
-	} else {
-		return 0;
-	}
-}
-
-void bin_insertion_sort(vector *v)
-{
-	for (int i = 1; i < size(v); i++) {
-		int left = 0, right = i - 1, mid = -1;
-		while (left <= right) {
-			mid = (left + right) / 2;
-			if (comparator(v->begin[i], v->begin[mid]) >= 0) {
-				left = mid + 1;
-			} else {
-				right = mid - 1;
-			}
-		}
-		int k = left;
-		value_type temp = v->begin[i];
-		for (int j = i - 1; j >= k; j--) {
-			v->begin[j + 1] = v->begin[j];
-		}
-		v->begin[k] = temp;
-	}
+unit * search(map *m, int key, int left, int right) {
+    int mid = (right + left) / 2;
+	if(left > right) {
+    	return NULL;
+	} else if(m->units[mid]->k < key) {
+        return search(m, key, mid+1, right);
+    } else if(m->units[mid]->k > key) {
+        return search(m, key, left, mid-1);
+    } if(m->units[mid]->k == key) {
+        return m->units[mid];
+    }
+   
+    return NULL;
 }

@@ -7,7 +7,7 @@ HD = massive.h
 
 start: $(OBJ)
 	$(CC) -o main $(OBJ) $(CCFLAGS)
-	./main test.txt
+	./main
 	rm -f main $(OBJ)
 
 all: $(OBJ)

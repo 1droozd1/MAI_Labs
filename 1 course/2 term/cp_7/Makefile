@@ -6,6 +6,7 @@ HD = vector.h
 
 all: $(OBJ)
 	$(CC) -o main $(OBJ) $(CCFLAGS)
+	./main
 
 main.o: $(HD)
 	$(CC) $(CCFLAGS) -c main.c
