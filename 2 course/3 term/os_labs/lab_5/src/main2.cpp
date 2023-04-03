@@ -1,25 +1,26 @@
-#include "stdio.h"
-#include "stdlib.h"
-#include "fun.h"
-#include "dlfcn.h"
+#include <stdio.h>
+#include <iostream>
+#include <dlfcn.h>
+#include "../src/types.h"
+
+using namespace std; 
 
 const char* lib1 = "./liblib1.so";
 const char* lib2 = "./liblib2.so";
 
 int main(int argc, char const *argv[])
 {
-	printf("Введите: [key] [arg1] ... [argN]\n");
-	printf("Если вы хотите поменять метод вычислений, введите 0\n");
-	printf("Если вы хотите посчитать площадь фигуры: 1 [first side] [second size]\n");
-	printf("Если вы хотите отсортировать массив: 2 [size] [array[0]] [array[1]] ... [array[size-1]]\n");
-
+	cout << "Введите: [key] [arg1] ... [argN]\n";
+	cout << "Если вы хотите поменять метод вычислений, введите 0\n";
+	cout << "Если вы хотите найти наибольший общий делитель для двух натуральных чисел: 1 [first number] [second number]\n";
+	cout << "Если вы хотите отсортировать массив: 2 [size] [array[0]] [array[1]] ... [array[size-1]]\n";
 	int key;
 	int checker = 0;
 	void* CurrentLib = dlopen(lib1, RTLD_LAZY);
-	printf("Библиотека:  %d \n", checker);
-	os_int (*Square)(os_float A, os_float B);
+	cout << "Библиотека: " << checker << "\n";
+	os_int (*GCD)(os_int A, os_int B);
 	os_int* (*Sort)(os_int *array, os_int size);
-	Square =(os_float (*)(os_float,os_float)) dlsym(CurrentLib, "Square");
+	GCD =(os_int (*)(os_int,os_int)) dlsym(CurrentLib, "GCD");
 	Sort =(os_int* (*)(os_int*, os_int)) dlsym(CurrentLib, "Sort");
 	while(cin >> key){
 		if (key == 0){
@@ -30,13 +31,13 @@ int main(int argc, char const *argv[])
 				CurrentLib = dlopen(lib1, RTLD_LAZY);
 			}
 			checker = !checker;
-       			Square = (os_float (*)(os_float, os_float)) dlsym(CurrentLib, "Square");
+       			GCD = (os_int (*)(os_int, os_int)) dlsym(CurrentLib, "GCD");
         		Sort =(os_int* (*)(os_int*, os_int)) dlsym(CurrentLib, "Sort");
 		}
 		if (key == 1){
-			os_float A,B;
+			os_int A,B;
 			cin >> A >> B;
-			cout << Square(A,B) << "\n"; 
+			cout << GCD(A,B) << "\n"; 
 		} 
 		if (key == 2){
 			os_int size;
@@ -54,7 +55,7 @@ int main(int argc, char const *argv[])
 		}
 		cout << "\nВведите: [key] [arg1] ... [argN]\n";
         	cout << "Если вы хотите поменять метод выислений, введите 0\n";
-        	cout << "Если вы хотите вычислить площадь фигуры: 1 [first side] [second size]\n";
+        	cout << "Если вы хотите найти наибольший общий делитель для двух натуральных чисел: 1 [first number] [second number]\n";
         	cout << "Если вы хотите отсортировать список: 2 [size] [array[0]] [array[1]] ... [array[size-1]]\n";
 		cout << "Библиотека: " << checker << "\n";
 	}

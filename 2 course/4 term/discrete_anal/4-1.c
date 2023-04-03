@@ -81,6 +81,15 @@ char *get(struct hashtable *ht, const char *key) {
     return NULL;
 }
 
+
+void sort_table(struct hashtable *table) {
+    char* key_array = (char*)malloc(table->size * sizeof(char*));
+    for (int i = 0; i < table->size; i++) {
+        key_array[i] = table->pairs
+    }
+
+}
+
 int main() {
     char line[MAX_LINE_LENGTH];
     char *day, *month, *year, *value;
@@ -100,10 +109,13 @@ int main() {
         // Добавляем пару ключ-значение в хеш-таблицу
         insert(ht, key, value);
     }
+    printf("Таблица создана\n");
 
+    char key[10];
+    scanf("Введите ключ: %s", key);
     // Проверяем, что данные добавлены в хеш-таблицу
-    char *val = get(ht, "01.02.2008");
-    printf("Value for key '01.02.2008': %s\n", val);
+    char *val = get(ht, key);
+    printf("Value for key: %s\n", val);
 
     // Очищаем хеш-таблицу
     free_hashtable(ht);
