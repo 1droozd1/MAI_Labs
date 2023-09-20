@@ -2,34 +2,46 @@
 
 using namespace std;
 
+// Структура для хранения каждой даты и её индекса в исходных данных
 struct item {
-    int value[3];
-    int ind;
+    int value[3]; // Хранение частей даты: [0] - день, [1] - месяц, [2] - год
+    int ind; // Индекс строки с этой датой в исходных данных
 };
 
+// Глобальные константы для размеров массивов
 const int strLen = 1e8;
 const int vectorLen = 1e6;
 
+// Функция для сортировки по одной части даты (дню, месяцу или году)
 void Sort(item *array, int len, int p) {
 
-    const int size = 10000;
-    int count[size + 1] = { 0 };
-    item *res = new item[len];
+    const int size = 10000; // Определяет размер массива для подсчета числа элементов с каждым ключом
+    int count[size + 1] = { 0 }; // Массив для подсчета числа элементов с каждым ключом (все нули)
+    item *res = new item[len]; // Временный массив, в котором будет храниться отсортированный результат
 
-    for (int i = 0; i < len; i++) {
+    for (int i = 0; i < len; i++) { // Подсчет элементов
         count[array[i].value[p]]++;
     }
+
+    /* Этот цикл делает массив count кумулятивным, 
+    что означает, что count[i] теперь хранит количество элементов, 
+    которые меньше или равны i. */ 
 
     for (int i = 1; i <= size; i++) {
         count[i] += count[i - 1];
     }
+
+    /* Этот цикл проходит по входному массиву в обратном порядке и 
+    размещает каждый элемент в правильной позиции в массиве res, 
+    используя информацию из массива count. */
+
     for (int i = len - 1; i >= 0; i--) {
         int key = array[i].value[p];
         int j = count[key] - 1;
         res[j] = array[i];
         count[key]--;
     }
-
+    // Копирование отсортированных данных обратно
     for (int i = 0; i < len; i++) {
         array[i] = res[i];
     }
@@ -37,9 +49,10 @@ void Sort(item *array, int len, int p) {
     delete[] res;
 }
 
-// Sorts an array using the Radix Sort algorithm
+// Функция для сортировки массива дат с использованием поразрядной сортировки
 void RadixSort(item *v, int len) {
-    for (size_t i = 0; i <3; ++i) {
+    // Проходим по всем частям даты (день, месяц, год)
+    for (size_t i = 0; i < 3; ++i) {
         Sort(v, len, i);
     }
 }
@@ -50,16 +63,16 @@ int main() {
     char* data = new char[strLen];
     item* vector = new item[vectorLen];
 
-    char c;
-    int size = 0;
+    char c; // переменная для хранения текущего считанного символа
+    int size = 0; // счетчик для числа обработанных дат
 
-    item current = { 0 };
-    current.ind = 0;
+    item current = { 0 }; // текущий обрабатываемый элемент (дата)
+    current.ind = 0; // начальный индекс для текущего элемента
 
-    int t = 0;
-    int currentInd = 0;
-    char last = '\n';
-    int f = 0;
+    int t = 0; // счетчик для индекса текущего символа в массиве data
+    int currentInd = 0; // индекс для текущей части даты (0 - день, 1 - месяц, 2 - год)
+    char last = '\n'; // последний считанный символ (инициализирован как перевод строки)
+    int f = 0; // счетчик цифр в текущей части даты
 
     while ((c = getchar_unlocked()) != EOF) {
         if (c == '\n') {
