@@ -1,0 +1,28 @@
+2023-09-25 14:39:08,325 - Text Length: 10^1, Pattern Length: 8
+Find Time: 0.000002 seconds
+KMP Time: 0.000005 seconds
+------------------------------
+2023-09-25 14:39:08,325 - Text Length: 10^2, Pattern Length: 74
+Find Time: 0.000001 seconds
+KMP Time: 0.000014 seconds
+------------------------------
+2023-09-25 14:39:08,326 - Text Length: 10^3, Pattern Length: 259
+Find Time: 0.000003 seconds
+KMP Time: 0.000074 seconds
+------------------------------
+2023-09-25 14:39:08,330 - Text Length: 10^4, Pattern Length: 9004
+Find Time: 0.000012 seconds
+KMP Time: 0.001381 seconds
+------------------------------
+2023-09-25 14:39:08,359 - Text Length: 10^5, Pattern Length: 45294
+Find Time: 0.000070 seconds
+KMP Time: 0.007307 seconds
+------------------------------
+2023-09-25 14:39:08,659 - Text Length: 10^6, Pattern Length: 724944
+Find Time: 0.000940 seconds
+KMP Time: 0.098278 seconds
+------------------------------
+2023-09-25 14:39:11,680 - Text Length: 10^7, Pattern Length: 7523704
+Find Time: 0.011512 seconds
+KMP Time: 1.040296 seconds
+------------------------------
