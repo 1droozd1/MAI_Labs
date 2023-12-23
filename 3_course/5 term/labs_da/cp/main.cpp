@@ -2,10 +2,8 @@
 #include <vector>
 #include <algorithm>
 #include <sstream>
-#include <chrono>
 
 using namespace std;
-using namespace chrono;
 
 vector<string> resultSequence;
 
@@ -110,14 +108,7 @@ int main() {
     reverse(revSequence1.begin(), revSequence1.end());
     reverse(revSequence2.begin(), revSequence2.end());
 
-    auto start = high_resolution_clock::now(); // Фиксируем начальное время
-
     reverseHirschberg(sequence1, sequence2, revSequence1, revSequence2, 0, sequence1.size() - 1, 0, sequence2.size() - 1);
-    auto stop = high_resolution_clock::now(); // Фиксируем конечное время
-
-    auto duration = duration_cast<microseconds>(stop - start); // Вычисляем длительность выполнения в микросекундах
-
-    cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
     
     cout << resultSequence.size() << '\n';
     for (const auto& word : resultSequence) {
