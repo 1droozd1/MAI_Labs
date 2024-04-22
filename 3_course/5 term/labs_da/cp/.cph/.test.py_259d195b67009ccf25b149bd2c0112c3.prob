@@ -1,0 +1,1 @@
+{"name":"Local: test","url":"/Users/dr0ozd/coding/MAI_Labs/3_course/5 term/labs_da/cp/test.py","tests":[{"id":1712941072766,"input":"3 3\n...\n###\n...\n4\n1 1 1 3\n1 1 3 3\n1 1 3 1\n3 1 3 3","output":""}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"/Users/dr0ozd/coding/MAI_Labs/3_course/5 term/labs_da/cp/test.py","group":"local","local":true}
