@@ -1,0 +1,1 @@
+{"name":"Local: c","url":"/Users/dr0ozd/coding/MAI_Labs/3_course/5 term/algorithms/contest/22_09/c.py","tests":[{"id":1726998467740,"input":"3\n3\n1 2 1\n2 1 1\n2\n1 1\n2 2\n4\n1 1 1 1\n2 1 2 1","output":""}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"/Users/dr0ozd/coding/MAI_Labs/3_course/5 term/algorithms/contest/22_09/c.py","group":"local","local":true}
